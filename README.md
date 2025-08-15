@@ -1,8 +1,5 @@
-# Chatter
+# Chatter – *Threat Intelligence Network*
 
-## Current Features
+**Chatter** is a chatroom listener designed for the **DoodadLabs Threat Intelligence Network**. This system integrates with your social accounts to passively monitor and log conversations while you focus on managing rapport-building, joining relevant chatrooms, and identifying key discussions.
 
-Source | Feature | Status
---- | --- | ---
-Telegram | Listen to channel messages | ✅
-Telegram | Listen to group messages | ✅
+
