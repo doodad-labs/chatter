@@ -1,22 +1,18 @@
 {
   "scripts": {
     "migrate": "npx drizzle-kit migrate",
-    "generate:migration": "npx drizzle-kit generate",
-    "telegram:add:channel": "tsx scripts/add-telegram-channel"
+    "generate:migration": "npx drizzle-kit generate"
   },
   "dependencies": {
-    "@types/node": "^24.2.1",
-    "commander": "^14.0.0",
-    "discord.js": "^14.21.0",
     "discord.js-selfbot-v13": "^3.7.0",
     "dotenv": "^17.2.1",
     "drizzle-orm": "^0.44.4",
     "input": "^1.0.1",
     "mysql2": "^3.14.3",
-    "telegram": "^2.26.22",
-    "telegram-mtproto": "^1.0.5"
+    "telegram": "^2.26.22"
   },
   "devDependencies": {
+    "@types/node": "24.3.0",
     "drizzle-kit": "^0.31.4",
     "tsx": "^4.20.4"
   }
