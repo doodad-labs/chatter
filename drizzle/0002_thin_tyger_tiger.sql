@@ -1,0 +1,1 @@
+ALTER TABLE `telegramChannels` MODIFY COLUMN `channelId` bigint unsigned NOT NULL;

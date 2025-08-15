@@ -1,0 +1,1 @@
+ALTER TABLE `telegramChannels` MODIFY COLUMN `channelId` varchar(255) NOT NULL;
