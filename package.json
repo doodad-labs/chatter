@@ -1,7 +1,8 @@
 {
   "scripts": {
     "migrate": "npx drizzle-kit migrate",
-    "generate:migration": "npx drizzle-kit generate"
+    "generate:migration": "npx drizzle-kit generate",
+    "migration:check": "npx drizzle-kit check"
   },
   "dependencies": {
     "discord.js-selfbot-v13": "^3.7.0",

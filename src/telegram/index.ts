@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import input from "input";
 
-import { eq } from 'drizzle-orm';
-import { telegramChannels, telegramChatter, telegramChats } from '../db/schema';
+import { and, eq } from 'drizzle-orm';
+import { chatter, telegram } from '../db/schema';
 
 import { TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
@@ -30,74 +30,6 @@ export default async function (db) {
     }
 
     console.log('Telegram client started successfully!');
-
-    // fetch all channels that the user has joined
-    const dialogs = await client.getDialogs();
-
-    // reset all channels and chats in the database
-    await db.update(telegramChannels).set({ joined: false });
-    await db.update(telegramChats).set({ joined: false });
-
-    for (const dialog of dialogs) {
-        const entity = dialog.entity;
-
-        if (entity && entity.className === 'Channel' && dialog.isChannel) {
-
-            const channelObject: typeof telegramChannels.$inferInsert = {
-                channelId: entity.id.toString(),
-                title: entity.title,
-                username: entity.username,
-                joined: true,
-                founded: new Date(entity.date * 1000)
-            };
-
-            const exists = await db.select().from(telegramChannels).where(eq(telegramChannels.channelId, channelObject.channelId)).limit(1);
-
-            if (exists.length === 1) {
-                try {
-                    await db.update(telegramChannels).set(channelObject).where(eq(telegramChannels.channelId, channelObject.channelId))
-                } catch (error) {
-                    console.log(error)
-                }
-            } else {
-                try {
-                    await db.insert(telegramChannels).values(channelObject)
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-
-        } 
-
-        if (entity && entity.className === 'Chat' && dialog.isGroup) {
-
-            const chatObject: typeof telegramChats.$inferInsert = {
-                chatId: entity.id.toString(),
-                title: entity.title,
-                joined: true,
-                founded: new Date(entity.date * 1000)
-            };
-
-            const exists = await db.select().from(telegramChats).where(eq(telegramChats.chatId, chatObject.chatId)).limit(1);
-
-            if (exists.length === 1) {
-                try {
-                    await db.update(telegramChats).set(chatObject).where(eq(telegramChats.chatId, chatObject.chatId))
-                } catch (error) {
-                    console.log(error)
-                }
-            } else {
-                try {
-                    await db.insert(telegramChats).values(chatObject)
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-
-        }
-    }
-
-    console.log('Telegram channels and chats updated in the database!');
     console.log('Listening for new messages...');
 
     // start listening to new messages from all joined channels
@@ -108,19 +40,29 @@ export default async function (db) {
         // Channel Messages
         if (event.message.peerId.className === 'PeerChannel') {
 
-            const exists = await db.select().from(telegramChatter).where(eq(telegramChatter.messageId, event.message.id.toString())).limit(1);
+            const exists = await db.select().from(telegram).where(and(eq(telegram.messageId, event.message.id.toString()), eq(telegram.channelId, event.message.peerId.channelId.toString()))).limit(1);
             if (exists.length === 0) {
-                const chatterObject: typeof telegramChatter.$inferInsert = {
-                    channelId: event.message.peerId.channelId.toString(),
-                    messageId: event.message.id.toString(),
+
+                const chatterObject: typeof chatter.$inferInsert = {
                     message: event.message.message.trim(),
-                    sent: new Date(event.message.date * 1000), // Convert from seconds to milliseconds
+                    sent: new Date(event.message.date * 1000),
+                    platform: 'telegram',
                 };
 
                 try {
-                    await db.insert(telegramChatter).values(chatterObject);
+                    await db.transaction(async (tx) => {
+                        const insertedChatter = await tx.insert(chatter).values(chatterObject);
+                        const telegramObject: typeof telegram.$inferInsert = {
+                            chatterId: Number(insertedChatter[0].insertId),
+                            channelId: event.message.peerId.channelId.toString(), 
+                            messageId: event.message.id.toString(),
+                        };
+
+                        await tx.insert(telegram).values(telegramObject);
+                    });
+
                 } catch (error) {
-                    console.log(error);
+                    console.error("Failed to insert chatter + telegram:", error);
                 }
             }
 
@@ -130,20 +72,31 @@ export default async function (db) {
         // Chat Messages
         if (event.message.peerId.className === 'PeerChat') {
 
-            const exists = await db.select().from(telegramChatter).where(eq(telegramChatter.messageId, event.message.id.toString())).limit(1);
+            const exists = await db.select().from(telegram).where(and(eq(telegram.messageId, event.message.id.toString()), eq(telegram.chatId, event.message.peerId.chatId.toString()))).limit(1);
+
             if (exists.length === 0) {
-                const chatterObject: typeof telegramChatter.$inferInsert = {
-                    chatId: event.message.peerId.chatId.toString(),
-                    fromId: event.message.fromId ? event.message.fromId.userId.toString() : 'Unknown',
-                    messageId: event.message.id.toString(),
+
+                const chatterObject: typeof chatter.$inferInsert = {
                     message: event.message.message.trim(),
-                    sent: new Date(event.message.date * 1000), // Convert from seconds to milliseconds
+                    sent: new Date(event.message.date * 1000),
+                    platform: 'telegram',
                 };
 
                 try {
-                    await db.insert(telegramChatter).values(chatterObject);
+                    await db.transaction(async (tx) => {
+                        const insertedChatter = await tx.insert(chatter).values(chatterObject);
+                        const telegramObject: typeof telegram.$inferInsert = {
+                            chatterId: Number(insertedChatter[0].insertId),
+                            chatId: event.message.peerId.chatId.toString(),
+                            fromId: event.message.fromId ? event.message.fromId.userId.toString() : 'Unknown',
+                            messageId: event.message.id.toString(),
+                        };
+
+                        await tx.insert(telegram).values(telegramObject);
+                    });
+
                 } catch (error) {
-                    console.log(error);
+                    console.error("Failed to insert chatter + telegram:", error);
                 }
             }
 

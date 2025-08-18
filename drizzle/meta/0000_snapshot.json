@@ -1,43 +1,44 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "b43fe83c-b7ad-4c37-a481-10589fb0f49e",
+  "id": "fd6ae971-cb1b-4fc5-82b4-a982d0020479",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "telegramChannels": {
-      "name": "telegramChannels",
+    "chatter": {
+      "name": "chatter",
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "int unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": true
         },
-        "channelId": {
-          "name": "channelId",
-          "type": "int",
+        "message": {
+          "name": "message",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
+        "attachments": {
+          "name": "attachments",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "username": {
-          "name": "username",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "founded": {
-          "name": "founded",
+        "sent": {
+          "name": "sent",
           "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "platform": {
+          "name": "platform",
+          "type": "enum('discord','telegram')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -63,24 +64,205 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "telegramChannels_id": {
-          "name": "telegramChannels_id",
+        "chatter_id": {
+          "name": "chatter_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "discord": {
+      "name": "discord",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "chatter_id": {
+          "name": "chatter_id",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "channelId": {
+          "name": "channelId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guildId": {
+          "name": "guildId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "authorId": {
+          "name": "authorId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "messageId": {
+          "name": "messageId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "discord_chatter_id_chatter_id_fk": {
+          "name": "discord_chatter_id_chatter_id_fk",
+          "tableFrom": "discord",
+          "tableTo": "chatter",
+          "columnsFrom": [
+            "chatter_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "discord_id": {
+          "name": "discord_id",
           "columns": [
             "id"
           ]
         }
       },
       "uniqueConstraints": {
-        "telegramChannels_channelId_unique": {
-          "name": "telegramChannels_channelId_unique",
+        "discord_chatter_id_unique": {
+          "name": "discord_chatter_id_unique",
           "columns": [
-            "channelId"
+            "chatter_id"
           ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "telegram": {
+      "name": "telegram",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
         },
-        "telegramChannels_username_unique": {
-          "name": "telegramChannels_username_unique",
+        "chatter_id": {
+          "name": "chatter_id",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "chatId": {
+          "name": "chatId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "channelId": {
+          "name": "channelId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fromId": {
+          "name": "fromId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "messageId": {
+          "name": "messageId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "telegram_chatter_id_chatter_id_fk": {
+          "name": "telegram_chatter_id_chatter_id_fk",
+          "tableFrom": "telegram",
+          "tableTo": "chatter",
+          "columnsFrom": [
+            "chatter_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "telegram_id": {
+          "name": "telegram_id",
           "columns": [
-            "username"
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "telegram_chatter_id_unique": {
+          "name": "telegram_chatter_id_unique",
+          "columns": [
+            "chatter_id"
           ]
         }
       },

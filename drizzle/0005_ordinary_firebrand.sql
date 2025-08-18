@@ -1,1 +1,0 @@
-ALTER TABLE `telegramChannels` ADD `joined` boolean DEFAULT false;

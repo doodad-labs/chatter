@@ -5,71 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1755206772052,
-      "tag": "0000_bitter_malice",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1755207038082,
-      "tag": "0001_tan_justin_hammer",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1755207094379,
-      "tag": "0002_thin_tyger_tiger",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1755207254064,
-      "tag": "0003_sturdy_amazoness",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1755208399290,
-      "tag": "0004_clumsy_sinister_six",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1755208944059,
-      "tag": "0005_ordinary_firebrand",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1755209760667,
-      "tag": "0006_pale_the_hunter",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1755209992374,
-      "tag": "0007_wonderful_vertigo",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1755256506552,
-      "tag": "0008_dapper_otto_octavius",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "5",
-      "when": 1755263979550,
-      "tag": "0009_futuristic_blockbuster",
+      "when": 1755547961222,
+      "tag": "0000_ambiguous_lyja",
       "breakpoints": true
     }
   ]
