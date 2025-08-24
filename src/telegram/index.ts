@@ -8,6 +8,8 @@ import { TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import { NewMessage, NewMessageEvent } from "telegram/events";
 
+import filter from '../utils/filter';
+
 const stringSession = new StringSession(process.env.TELEGRAM_SESSION);
 
 export default async function (db) {
@@ -36,6 +38,7 @@ export default async function (db) {
     client.addEventHandler(async (event: NewMessageEvent) => {
 
         if (event.message.message.trim() === '') return;
+        if (filter(event.message.message)) return;
 
         // Channel Messages
         if (event.message.peerId.className === 'PeerChannel') {

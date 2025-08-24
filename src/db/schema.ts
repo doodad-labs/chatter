@@ -29,12 +29,24 @@ export const discord = mysqlTable('discord', {
   created_at: timestamp().defaultNow()                // Timestamp for database creation, defaults to current time
 });
 
+export const attachment = mysqlTable('attachment', {
+  id: serial().primaryKey(),
+
+  chatterId: int('chatter_id', { unsigned: true }).notNull().references(() => chatter.id),
+  name: text().notNull(),
+  hash: text().notNull(),
+  size: int('size', { unsigned: true }).notNull(),
+  contentType: text().notNull(),
+  content: text().notNull(),
+
+  updated_at: timestamp().defaultNow().onUpdateNow(),
+  created_at: timestamp().defaultNow()
+});
 
 export const chatter = mysqlTable('chatter', {
   id: int('id', { unsigned: true }).primaryKey().autoincrement(),
 
-  message: text().notNull(),
-  attachments: text(),
+  message: text(),
   sent: timestamp().notNull().defaultNow(),
 
   platform: mysqlEnum(['discord', 'telegram']).notNull(), 
@@ -42,7 +54,6 @@ export const chatter = mysqlTable('chatter', {
   updated_at: timestamp().defaultNow().onUpdateNow(),
   created_at: timestamp().defaultNow()
 });
-
 
 export const chatterRelations = relations(chatter, ({ one }) => ({
   discord: one(discord, {

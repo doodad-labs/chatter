@@ -1,0 +1,1 @@
+ALTER TABLE `chatter` MODIFY COLUMN `message` text;
