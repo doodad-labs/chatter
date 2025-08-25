@@ -8,7 +8,7 @@ Telegram | Group Listening | `done`
 Telegram | Channel Listening | `done`
 Telegram | File download | `planned`
 Discord | Message Listening | `done`
-Discord | File download | `planned`
+Discord | File download | `done`
 
 ## Operational Security (OpSec) Recommendations
 
